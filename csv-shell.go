@@ -28,7 +28,7 @@ func CountCSVRowsShell(source string) (int, error) {
     return rowCount, nil
 }
 
-func ExtractFirstNRowsShell(source string, destination string, maxRows int, randomise bool) (error) {
+func ExtractFirstNRowsShell(source string, destination string, maxRows int) (error) {
     defer un(trace("ExtractFirstNRowsShell"))
     
     err := assertValidFilename(source)
@@ -43,6 +43,26 @@ func ExtractFirstNRowsShell(source string, destination string, maxRows int, rand
     fmt.Printf("Fetching %d rows from %s\r\n", maxRows, source)
     
     cmd := exec.Command("sed", "-n", "'1, 5000 p'", source, ">", destination)
+    _ = cmd.Run()
+    
+    return nil
+}
+
+func ExtractRandomNRowsShell(source string, destination string, maxRows int) (error) {
+    defer un(trace("ExtractRandomNRowsShell"))
+    
+    err := assertValidFilename(source)
+    if err != nil {
+        return err
+    }
+    
+    if maxRows < 1 {
+        maxRows = 1
+    }
+    
+    fmt.Printf("Fetching %d random rows from %s\r\n", maxRows, source)
+    
+    cmd := exec.Command("shuf", "-n", fmt.Sprintf("%d", maxRows), source, ">", destination)
     _ = cmd.Run()
     
     return nil

@@ -34,7 +34,7 @@ func CountCSVRowsGo(source string) (int, error) {
     return rowCount, nil
 }
 
-func ExtractFirstNRowsGo(source string, destination string, maxRows int, randomise bool) (error) {
+func ExtractFirstNRowsGo(source string, destination string, maxRows int) (error) {
     defer un(trace("ExtractFirstNRowsGo"))
     
     err := assertValidFilename(source)
