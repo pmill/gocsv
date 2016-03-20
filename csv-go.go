@@ -23,7 +23,7 @@ func CountCSVRowsGo(source string) (int, error) {
     rowCount := 0
     
     for {
-        _, err := r.Read()        
+        _, err := r.Read()
         if err == io.EOF {
             break
         }

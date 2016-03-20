@@ -10,7 +10,7 @@ func main() {
     destination := flag.String("output", "", "enter a csv filename")
     maxRows := flag.Int("maxRows", 1, "enter the number of rows you want to extract")
     randomise := flag.Bool("randomise", false, "do you want to extract random rows")
-    action := flag.String("action", "rowCount", "enter an action [rowCount,extractFirstNRows]")
+    action := flag.String("action", "rowCount", "enter an action [rowCount,extractFirstNRows,extractHeader]")
     flag.Parse()
     
     switch *action {
@@ -37,6 +37,13 @@ func main() {
             err = ExtractFirstNRowsShell(*filename, *destination, *maxRows, *randomise)
             if err != nil {
                 fmt.Printf("%s\r\n", err.Error())
+            }
+        case "extractHeader":
+            header, err := ExtractRowShell(*filename, 1)
+            if err != nil {
+                fmt.Printf("Err: %s\r\n", err.Error())
+            } else {
+                fmt.Printf("%s", header)
             }
     }
 }

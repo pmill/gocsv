@@ -1,6 +1,8 @@
 package main;
 
 import (
+    "bytes"
+    "encoding/csv"
     "fmt"
     "os/exec"
     "strconv"
@@ -27,7 +29,7 @@ func CountCSVRowsShell(source string) (int, error) {
 }
 
 func ExtractFirstNRowsShell(source string, destination string, maxRows int, randomise bool) (error) {
-    defer un(trace("ExtractFirstNRowsGo"))
+    defer un(trace("ExtractFirstNRowsShell"))
     
     err := assertValidFilename(source)
     if err != nil {
@@ -44,4 +46,30 @@ func ExtractFirstNRowsShell(source string, destination string, maxRows int, rand
     _ = cmd.Run()
     
     return nil
+}
+
+func ExtractRowShell(source string, rowNumber int) ([]string, error) {
+    defer un(trace("ExtractRowShell"))
+    
+    err := assertValidFilename(source)
+    if err != nil {
+        return nil, err
+    }
+    
+    cmd := exec.Command("sed", "-n", fmt.Sprintf("%dp", rowNumber), source)
+    cmdOut, _ := cmd.Output()
+    
+    b := bytes.NewBufferString(string(cmdOut))
+    r := csv.NewReader(b)
+    
+    rows, err := r.ReadAll()
+    if err != nil {
+        return nil, err
+    }
+    
+    if len(rows) == 0 {
+        return nil, fmt.Errorf("No header found")
+    }
+    
+    return rows[0], nil
 }
